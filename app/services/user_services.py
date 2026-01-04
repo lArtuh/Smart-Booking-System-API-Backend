@@ -1,8 +1,20 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.hashing import Hash
 from fastapi import HTTPException
-from app.crud.users_crud import get_user_by_email
+from app.crud.users_crud import get_user_by_email, create_user
 from app.auth.jwt_handler import create_access_token
+from app.schemas.user_schemas import UserCreate
+
+# registrar usuario
+
+
+async def register(db: AsyncSession, data: UserCreate):
+    new_user = await create_user(db, data)
+    email = new_user.email
+    password = data.password
+    token = await login(db, email, password)
+    return token
+# logear usuario
 
 
 async def login(db: AsyncSession, email: str, password: str):

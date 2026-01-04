@@ -7,6 +7,9 @@ from fastapi import HTTPException
 
 
 async def create_user(db: AsyncSession, data: UserCreate):
+    user_email = await db.execute(select(User).where(User.email == data.email))
+    if user_email:
+        raise HTTPException(status_code=409, detail="Email already in use")
     hashed_pw = Hash.bcrypt(data.password)
 
     new_user = User(
