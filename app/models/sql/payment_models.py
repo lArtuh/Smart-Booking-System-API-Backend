@@ -8,6 +8,7 @@ class Payment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, nullable=False)
+    property_id = Column(Integer, nullable=False)
     booking_id = Column(String, nullable=False)
     date = Column(DateTime, nullable=False, default=datetime.utcnow)
     amount = Column(Numeric(10, 2), nullable=False)

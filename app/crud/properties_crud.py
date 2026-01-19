@@ -13,7 +13,7 @@ async def create_property(user_id: str, data: PropertyCreate):
 
 # show property
 
-async def show_property(property_id: str, user_id: str):
+async def get_property(property_id: str, user_id: str):
     property = await Property.find_one(
         (Property.id == property_id) & (Property.user_id == user_id)
     )
@@ -30,35 +30,13 @@ async def show_all_properties(user_id: str):
 
 
 # update property
-async def update_property(property_id: str, user_id: str, data: PropertyUpdate):
-    property = await Property.find_one(
-        (Property.id == property_id) & (Property.user_id == user_id)
-    )
-    if not property:
-        raise HTTPException(status_code=404, detail="not found")
+async def update_property(property: Property, data: PropertyUpdate):
     await property.set(data.model_dump(exclude_unset=True))
-    return {"message": "Property updated successfully"}
+    return property
 
 # delete property
 
 
-async def delete_property(user_id: str, property_id: str):
-    property = await Property.find_one(
-        (Property.id == property_id) & (Property.user_id == user_id)
-    )
-    if not property:
-        raise HTTPException(status_code=404, detail="not found")
+async def delete_property(property: Property):
     await property.delete()
     return {"mensage": "Property deleted successfully"}
-
-# cancel property
-
-
-async def cancel_property(property_id: str, user_id: str):
-    property = await Property.find_one(
-        (Property.id == property_id) & (Property.user_id == user_id)
-    )
-    if not property:
-        raise HTTPException(status_code=404, detail="not found")
-    await property.set({"status": "canceled"})
-    return {"message": "canceled"}

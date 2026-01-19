@@ -2,12 +2,11 @@ from fastapi import APIRouter, Depends
 from app.schemas.booking_schemas import BookingCreate, BookingUpdate, BookingResponse
 from app.models.sql.user_models import User
 from app.auth.dependencies import get_current_user
-from app.crud.booking_crud import (
-    create_booking,
-    show_booking,
-    show_all_bookings,
-    update_booking,
-    delete_booking,
+from app.services.booking_services import (
+    create_booking_service,
+    get_booking_service,
+    show_all_bookings_services,
+    update_booking_service,
     cancel_booking
 )
 
@@ -21,7 +20,7 @@ async def create_booking_router(
     data: BookingCreate,
     current_user: User = Depends(get_current_user)
 ):
-    new_booking = await create_booking(data, current_user)
+    new_booking = await create_booking_service(data, current_user)
     return new_booking
 
 
@@ -32,7 +31,7 @@ async def show_booking_router(
     booking_id: str,
     current_user: User = Depends(get_current_user)
 ):
-    bookings = await show_booking(booking_id, current_user.id)
+    bookings = await get_booking_service(booking_id, current_user.id)
     return bookings
 
 # show all bookings
@@ -42,7 +41,7 @@ async def show_booking_router(
 async def show_all_bookings_router(
     current_user: User = Depends(get_current_user)
 ):
-    bookings = await show_all_bookings(current_user.id)
+    bookings = await show_all_bookings_services(current_user.id)
     return bookings
 
 # update booking
@@ -54,19 +53,9 @@ async def update_booking_router(
     data: BookingUpdate,
     current_user: User = Depends(get_current_user)
 ):
-    new_booking = await update_booking(booking_id, current_user.id, data)
+    new_booking = await update_booking_service(booking_id, current_user.id, data)
     return new_booking
 
-# delete booking
-
-
-@booking_router.delete("/{booking_id}")
-async def delete_booking_router(
-    booking_id: str,
-    current_user: User = Depends(get_current_user)
-):
-    deleted_booking = await delete_booking(booking_id, current_user.id)
-    return deleted_booking
 
 # cancel booking
 

@@ -11,7 +11,7 @@ class PropertyBase(BaseModel):
 
 
 class PropertyCreate(PropertyBase):
-    user_id: int
+    user_id: str
 
 
 class PropertyUpdate(BaseModel):

@@ -1,6 +1,6 @@
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
-from app.models.nosql.booking_models import Booking
+from app.models.nosql.booking_model import Booking
 from app.models.nosql.property_model import Property
 
 MONGO_URL = "mongodb://localhost:27017"

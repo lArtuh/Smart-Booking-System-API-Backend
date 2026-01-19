@@ -9,6 +9,7 @@ class Booking(Document):
     start_date: datetime
     end_date: datetime
     status: str = "pending"
+    pay_id: int = None
 
     class Settings:
         name = "bookings"
