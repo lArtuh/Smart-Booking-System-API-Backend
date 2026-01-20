@@ -12,7 +12,7 @@ user_router = APIRouter(prefix="/users", tags=["Users"])
 # register
 
 
-@user_router.post("/", response_model=UserResponse)
+@user_router.post("/register", response_model=UserResponse)
 async def register_user(
     data: UserCreate,
     db=Depends(get_db)
@@ -22,7 +22,7 @@ async def register_user(
 
 
 # login
-@user_router.post("/", response_model=UserResponse)
+@user_router.post("/login", response_model=UserResponse)
 async def login_user(
     data: UserCreate,
     db=Depends(get_db)

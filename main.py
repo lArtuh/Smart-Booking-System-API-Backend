@@ -10,7 +10,7 @@ app = FastAPI(title="Smart Booking System")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Puedes cambiarlo luego por dominios específicos
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
