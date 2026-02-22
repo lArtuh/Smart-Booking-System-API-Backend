@@ -8,13 +8,12 @@ class BookingBase(BaseModel):
 
 
 class BookingCreate(BookingBase):
-    property_id: str
+    pass
 
 
 class BookingUpdate(BaseModel):
     start_date: datetime | None = None
     end_date: datetime | None = None
-    status: str | None = None
 
 
 class BookingResponse(BookingBase):
@@ -23,3 +22,4 @@ class BookingResponse(BookingBase):
     owner_id: int
     property_id: str
     status: str | None = "pending"
+    pay_id: int | None = None

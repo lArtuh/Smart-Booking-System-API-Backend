@@ -21,27 +21,31 @@ def validate_booking_for_review(booking: Booking):
 
 # validate payment
 
+
 async def validate_payment(
-    booking_id: Booking,
+    booking: Booking,
     db: AsyncSession,
     user_id: int,
-    property_id: str,
+    property_id: str
 ):
-    payment_id = booking_id.pay_id
-    payment: Payment = get_payment(
+    payment_id = booking.pay_id
+    if not payment_id:
+        raise HTTPException(status_code=400, detail="Booking has no payment")
+
+    payment: Payment = await get_payment(
         db,
+        payment_id,
         user_id,
-        payment_id
     )
     # user
-    payment_user = payment.user_id == user_id,
+    payment_user = payment.user_id == user_id
     if not payment_user:
         raise HTTPException(
             status_code=403, detail="Payment does not belong to this user")
 
     # property
 
-    payment_property = payment.property_id == property_id,
+    payment_property = payment.property_id == property_id
 
     if not payment_property:
         raise HTTPException(
@@ -49,7 +53,7 @@ async def validate_payment(
 
     # paid
 
-    payment_status = payment.status == "paid",
+    payment_status = booking.status == "paid"
 
     if not payment_status:
         raise HTTPException(status_code=403, detail="Payment not complete")

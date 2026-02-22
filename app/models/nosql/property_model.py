@@ -1,11 +1,11 @@
-from beanie import Document
+from beanie import Document, PydanticObjectId
 from datetime import datetime
 from typing import List
 from pydantic import Field
 
 
 class Property(Document):
-    user_id: str
+    user_id: int
     title: str
     description: str
     address: str

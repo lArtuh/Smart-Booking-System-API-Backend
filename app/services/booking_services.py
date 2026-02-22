@@ -1,8 +1,9 @@
-from app.schemas.booking_schemas import BookingCreate, BookingUpdate
+from app.schemas.booking_schemas import BookingCreate, BookingUpdate, BookingResponse
 from app.models.nosql.booking_model import Booking
 from app.models.nosql.property_model import Property
 from fastapi import HTTPException
 from app.crud.booking_crud import get_booking
+from beanie import PydanticObjectId
 from app.crud.booking_crud import (
     create_booking,
     get_booking,
@@ -14,16 +15,21 @@ from app.crud.booking_crud import (
 
 
 async def create_booking_service(
-    user_id: int,
+    property_id: str,
     data: BookingCreate,
+    user_id: int
 ):
-    prop = await Property.get(data.property_id)
+    try:
+        property_oid = PydanticObjectId(property_id)
+    except:
+        raise HTTPException(400, "Invalid property id")
+    prop = await Property.get(property_oid)
     if not prop:
         raise HTTPException(status_code=404, detail="Property not found")
     if prop.user_id == user_id:
         raise HTTPException(
             status_code=400, detail="You cannot book your own prop")
-    if prop.status != "available":
+    if prop.status == "paused":
         raise HTTPException(status_code=404, detail="Property not available")
 
     if data.end_date < data.start_date:
@@ -32,9 +38,9 @@ async def create_booking_service(
             detail="End date cannot be earlier than start date"
         )
     overlap = await Booking.find_one(
-        (Booking.property_id == data.property_id) &
-        (Booking.end_date >= data.start_date) &
-        (Booking.start_date <= data.end_date)
+        Booking.property_id == property_id,
+        Booking.end_date >= data.start_date,
+        Booking.start_date <= data.end_date
     )
     if overlap:
         raise HTTPException(
@@ -43,14 +49,20 @@ async def create_booking_service(
         )
     new_booking = Booking(
         **data.model_dump(),
+        property_id=property_id,
         user_id=user_id,
         owner_id=prop.user_id
     )
 
-    review = await create_booking(new_booking)
+    booking = await create_booking(new_booking)
+
     prop.status = "reserved"
     await prop.save()
-    return review
+
+    data = booking.model_dump()
+    data["id"] = str(booking.id)
+
+    return BookingResponse(**data)
 
 # show booking
 
@@ -59,26 +71,56 @@ async def get_booking_service(
     booking_id: str,
     user_id: int,
 ):
-    boking = get_booking(booking_id, user_id)
-    return boking
+    booking = await get_booking(booking_id, user_id)
+
+    data = booking.model_dump()
+
+    data["id"] = str(booking.id)
+
+    return BookingResponse(**data)
 
 # show all bookings
 
 
-async def show_all_bookings_services(user_id: str):
-    bokings = show_all_bookings(user_id)
-    return bokings
+async def show_all_bookings_services(user_id: int):
+    bookings = await show_all_bookings(user_id)
+
+    return [
+        BookingResponse(
+            **{
+                **b.model_dump(),
+                "id": str(b.id),
+            }
+        )
+        for b in bookings
+    ]
 # update booking
 
 
-async def update_booking_service(booking_id: str, user_id: str, data: BookingUpdate):
-    booking = get_booking(booking_id, user_id)
-    updated_booking = update_booking(booking, data)
-    return updated_booking
+async def update_booking_service(
+    booking_id: str,
+    user_id: int,
+    data: BookingUpdate
+):
+    booking = await get_booking(booking_id, user_id)
+
+    booking = await update_booking(booking, data)
+
+    data_booking = booking.model_dump()
+    data_booking["id"] = str(booking.id)
+
+    return BookingResponse(**data_booking)
+
 # cancel booking
 
 
 async def cancel_booking(booking_id: str, user_id: int):
-    booking: Booking = get_booking(booking_id, user_id)
+    booking: Booking = await get_booking(booking_id, user_id)
+    if booking.status == "canceled":
+        raise HTTPException(400, "Booking already canceled")
     await booking.set({"status": "canceled"})
-    return {"message": "Booking canceled successfully"}
+
+    data_booking = booking.model_dump()
+    data_booking["id"] = str(booking.id)
+
+    return BookingResponse(**data_booking)

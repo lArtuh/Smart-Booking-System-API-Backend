@@ -1,15 +1,17 @@
 from beanie import Document
 from datetime import datetime
+from beanie import PydanticObjectId
 
 
 class Booking(Document):
-    user_id: str
-    owner_id: str
+
     property_id: str
+    user_id: int
+    owner_id: int
     start_date: datetime
     end_date: datetime
     status: str = "pending"
-    pay_id: int = None
+    pay_id: int | None = None
 
     class Settings:
         name = "bookings"

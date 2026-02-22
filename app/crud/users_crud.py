@@ -8,8 +8,10 @@ from fastapi import HTTPException
 
 async def create_user(db: AsyncSession, data: UserCreate):
     user_email = await db.execute(select(User).where(User.email == data.email))
-    if user_email:
-        raise HTTPException(status_code=409, detail="Email already in use")
+    existing_user_email = user_email.scalar_one_or_none()
+    if existing_user_email:
+        raise HTTPException(
+            status_code=409, detail="Email already in use")
     hashed_pw = Hash.bcrypt(data.password)
 
     new_user = User(
@@ -28,23 +30,20 @@ async def get_user_by_id(db: AsyncSession, id: int):
     user = await db.execute(select(User).where(User.id == id))
     result = user.scalar_one_or_none()
     if not result:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=404, detail="User not found")
     return result
 
 
 async def get_user_by_email(db: AsyncSession, email: str):
     user = await db.execute(select(User).where(User.email == email))
     result = user.scalar_one_or_none()
-    if not result:
-        raise HTTPException(status_code=404, detail="User not found")
     return result
 
 
 async def get_all_users(db: AsyncSession):
     user = await db.execute(select(User))
     result = user.scalars().all()
-    if not result:
-        raise HTTPException(status_code=404, detail="User not found")
     return result
 
 

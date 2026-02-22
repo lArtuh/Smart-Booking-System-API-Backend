@@ -15,12 +15,13 @@ booking_router = APIRouter(prefix="/bookings", tags=["bookings"])
 # create booking
 
 
-@booking_router.post("/", response_model=BookingResponse)
+@booking_router.post("/{property_id}", response_model=BookingResponse)
 async def create_booking_router(
+    property_id: str,
     data: BookingCreate,
     current_user: User = Depends(get_current_user)
 ):
-    new_booking = await create_booking_service(data, current_user)
+    new_booking = await create_booking_service(property_id, data, current_user.id)
     return new_booking
 
 
@@ -47,7 +48,7 @@ async def show_all_bookings_router(
 # update booking
 
 
-@booking_router.put("/{booking_id}")
+@booking_router.put("/{booking_id}", response_model=BookingResponse)
 async def update_booking_router(
     booking_id: str,
     data: BookingUpdate,
@@ -60,7 +61,7 @@ async def update_booking_router(
 # cancel booking
 
 
-@booking_router.post("/{booking_id}/cancel")
+@booking_router.patch("/{booking_id}/cancel", response_model=BookingResponse)
 async def cancel_booking_router(
     booking_id: str,
     current_user: User = Depends(get_current_user)

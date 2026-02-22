@@ -3,7 +3,9 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Smart Booking System"
+
     DATABASE_URL: str
+    MONGODB_URL: str
     SECRET_KEY: str
 
     class Config:

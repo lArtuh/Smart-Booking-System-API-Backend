@@ -1,18 +1,23 @@
 from app.models.nosql.review_model import Review
-from app.schemas.reviews_schemas import ReviewCreate, ReviewUpdate
+from app.schemas.reviews_schemas import ReviewCreate
 from fastapi import HTTPException
+from beanie import PydanticObjectId
 
 # create review
 
 
-async def create_review(
+async def create_review_crud(
     property_id: str,
     user_id: int,
+    booking_id: str,
     data: ReviewCreate,
 ):
-    new_review = Review(**data.model_dump())
-    new_review.property_id = property_id
-    new_review.user_id = user_id
+    new_review = Review(
+        **data.model_dump(),
+        property_id=property_id,
+        booking_id=booking_id,
+        user_id=user_id,
+    )
 
     await new_review.insert()
     return new_review
@@ -21,11 +26,15 @@ async def create_review(
 # show review
 
 
-async def get_review(review_id: str, user_id: str, property_id: str):
+async def get_review_crud(review_id: str, user_id: int):
+    try:
+        review_oid = PydanticObjectId(review_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid ID format")
+
     review = await Review.find_one(
-        (Review.id == review_id) &
-        (Review.user_id == user_id) &
-        (Review.property_id == property_id)
+        Review.id == review_oid,
+        Review.user_id == user_id
     )
     if not review:
         raise HTTPException(status_code=404, detail="not found")
@@ -34,19 +43,19 @@ async def get_review(review_id: str, user_id: str, property_id: str):
 
 # show all reviews by property
 
-async def show_all_reviews(property_id: str):
+async def show_all_reviews_crud(property_id: str):
+
     reviews = await Review.find(Review.property_id == property_id).to_list()
     return reviews
 
 
-# update review
-async def update_review(review: Review, data: ReviewUpdate):
-    await review.set(data.model_dump(exclude_unset=True))
-    return {"message": "Review updated successfully"}
+# # update review
+# async def update_review(review: Review, data: ReviewUpdate):
+#     await review.set(data.model_dump(exclude_unset=True))
+#     return {"message": "Review updated successfully"}
 
 # delete review
 
 
-async def delete_review(review: Review):
+async def delete_review_crud(review: Review):
     await review.delete()
-    return {"mensage": "Review deleted successfully"}

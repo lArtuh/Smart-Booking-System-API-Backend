@@ -12,6 +12,11 @@ class UserCreate(UserBase):
     date: datetime = Field(default_factory=datetime.utcnow)
 
 
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
 class UserUpdate(BaseModel):
     name: str | None = None
     email: EmailStr | None = None
@@ -24,3 +29,8 @@ class UserResponse(UserBase):
 
     class Config:
         from_attributes = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str

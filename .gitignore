@@ -207,3 +207,6 @@ marimo/_lsp/
 __marimo__/
 
 email_validator/
+
+# Base de datos local
+dev.db

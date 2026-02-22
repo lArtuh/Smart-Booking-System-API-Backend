@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from beanie import PydanticObjectId
 
 
 class PropertyBase(BaseModel):
@@ -11,7 +12,7 @@ class PropertyBase(BaseModel):
 
 
 class PropertyCreate(PropertyBase):
-    user_id: str
+    pass
 
 
 class PropertyUpdate(BaseModel):
@@ -25,4 +26,5 @@ class PropertyUpdate(BaseModel):
 
 class PropertyResponse(PropertyBase):
     id: str
-    user_id: str
+    user_id: int
+    status: str
