@@ -9,7 +9,6 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
-    date: datetime = Field(default_factory=datetime.utcnow)
 
 
 class UserLogin(BaseModel):
