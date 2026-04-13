@@ -6,7 +6,7 @@ from app.models.nosql.review_model import Review
 from app.core.config import settings
 
 
-DB_NAME = "my_database"
+DB_NAME = "smart_booking_db"
 
 
 async def init_mongo():

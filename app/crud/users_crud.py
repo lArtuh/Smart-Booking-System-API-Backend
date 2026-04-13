@@ -12,6 +12,9 @@ async def create_user(db: AsyncSession, data: UserCreate):
     if existing_user_email:
         raise HTTPException(
             status_code=409, detail="Email already in use")
+    print("PASSWORD:", data.password)
+    print("TYPE:", type(data.password))
+    print("LEN:", len(data.password))
     hashed_pw = Hash.bcrypt(data.password)
 
     new_user = User(
