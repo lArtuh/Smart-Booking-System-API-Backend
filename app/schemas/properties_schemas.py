@@ -8,11 +8,10 @@ class PropertyBase(BaseModel):
     address: str
     city: str
     country: str
-    price_per_night: float | None = None
 
 
 class PropertyCreate(PropertyBase):
-    pass
+    price_per_night: float | None = None
 
 
 class PropertyUpdate(BaseModel):
@@ -28,3 +27,4 @@ class PropertyResponse(PropertyBase):
     id: str
     user_id: int
     status: str
+    price_per_night: float

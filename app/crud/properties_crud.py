@@ -6,30 +6,29 @@ from beanie import PydanticObjectId
 # create property
 
 
-async def create_property(user_id: str, data: PropertyCreate):
+async def create_property_crud(user_id: str, data: PropertyCreate):
     new_property = Property(
         **data.model_dump(),
         user_id=user_id
     )
-
     await new_property.insert()
     return new_property
 
 
 # show property
 
-async def get_property(property_id: str, user_id: str):
+async def get_property_crud(property_id: str, user_id: str):
     try:
-        object_id = PydanticObjectId(property_id)
+        property_oid = PydanticObjectId(property_id)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid ID format")
 
     property = await Property.find_one(
-        Property.id == object_id,
+        Property.id == property_oid,
         Property.user_id == user_id
     )
     if not property:
-        raise HTTPException(status_code=404, detail="not found")
+        raise HTTPException(status_code=404, detail="Property not found")
     return property
 
 
@@ -43,12 +42,13 @@ async def show_all_user_properties_crud(user_id: str):
 # show user properties
 
 async def show_all_properties_crud():
-    properties = await Property.find_all().to_list()
+    properties = await Property.find(
+        Property.status != "paused").to_list()
     return properties
 
 
 # update property
-async def update_property(property: Property, data: PropertyUpdate):
+async def update_property_crud(property: Property, data: PropertyUpdate):
 
     await property.update({
         "$set": data.model_dump(exclude_unset=True)
@@ -59,6 +59,6 @@ async def update_property(property: Property, data: PropertyUpdate):
 # delete property
 
 
-async def delete_property(property: Property):
+async def delete_property_crud(property: Property):
     await property.delete()
     return {"mensage": "Property deleted successfully"}

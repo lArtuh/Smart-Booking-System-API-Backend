@@ -1,6 +1,5 @@
 from beanie import Document
 from datetime import datetime
-from beanie import PydanticObjectId
 
 
 class Booking(Document):

@@ -33,8 +33,8 @@ async def show_payment_router(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    new_payment = await get_payment_service(db, payment_id, current_user.id)
-    return new_payment
+    payment = await get_payment_service(db, payment_id, current_user.id)
+    return payment
 
 
 # show all payments
@@ -44,5 +44,5 @@ async def show_all_payments_router(
     current_user: User = Depends(get_current_user)
 
 ):
-    new_payment = await show_all_payments_service(db, current_user.id)
-    return new_payment
+    payments = await show_all_payments_service(db, current_user.id)
+    return payments

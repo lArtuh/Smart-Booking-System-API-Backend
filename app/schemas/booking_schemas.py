@@ -18,7 +18,7 @@ class BookingUpdate(BaseModel):
 
 class BookingResponse(BookingBase):
     id: str
-    user_id: int
+    customer_id: int
     owner_id: int
     property_id: str
     status: str | None = "pending"

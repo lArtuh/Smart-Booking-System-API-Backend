@@ -6,51 +6,61 @@ from sqlalchemy import select
 from fastapi import HTTPException
 
 
-async def create_user(db: AsyncSession, data: UserCreate):
-    user_email = await db.execute(select(User).where(User.email == data.email))
-    existing_user_email = user_email.scalar_one_or_none()
-    if existing_user_email:
-        raise HTTPException(
-            status_code=409, detail="Email already in use")
-    print("PASSWORD:", data.password)
-    print("TYPE:", type(data.password))
-    print("LEN:", len(data.password))
-    hashed_pw = Hash.bcrypt(data.password)
+# async def create_user(db: AsyncSession, data: UserCreate):
+#     user_email = await db.execute(select(User).where(User.email == data.email))
+#     existing_user_email = user_email.scalar_one_or_none()
+#     if existing_user_email:
+#         raise HTTPException(
+#             status_code=409, detail="Email already in use")
+#     print("PASSWORD:", data.password)
+#     print("TYPE:", type(data.password))
+#     print("LEN:", len(data.password))
+#     hashed_pw = Hash.bcrypt(data.password)
 
+#     new_user = User(
+#         name=data.name,
+#         email=data.email,
+#         hashed_password=hashed_pw
+#     )
+
+#     db.add(new_user)
+#     await db.commit()
+#     await db.refresh(new_user)
+#     return new_user
+
+
+async def create_user_crud(db: AsyncSession, data: UserCreate):
+    hashed_pw = Hash.bcrypt(data.password)
     new_user = User(
         name=data.name,
         email=data.email,
         hashed_password=hashed_pw
     )
-
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
     return new_user
 
 
-async def get_user_by_id(db: AsyncSession, id: int):
+async def get_user_by_id_crud(db: AsyncSession, id: int):
     user = await db.execute(select(User).where(User.id == id))
     result = user.scalar_one_or_none()
-    if not result:
-        raise HTTPException(
-            status_code=404, detail="User not found")
     return result
 
 
-async def get_user_by_email(db: AsyncSession, email: str):
+async def get_user_by_email_crud(db: AsyncSession, email: str):
     user = await db.execute(select(User).where(User.email == email))
     result = user.scalar_one_or_none()
     return result
 
 
-async def get_all_users(db: AsyncSession):
+async def get_all_users_crud(db: AsyncSession):
     user = await db.execute(select(User))
     result = user.scalars().all()
     return result
 
 
-async def update_user(db: AsyncSession, id: int, data: UserUpdate):
+async def update_user_crud(db: AsyncSession, id: int, data: UserUpdate):
     result = await db.execute(select(User).where(User.id == id))
     user = result.scalar_one_or_none()
 
@@ -68,12 +78,7 @@ async def update_user(db: AsyncSession, id: int, data: UserUpdate):
     return user
 
 
-async def delete_user(db: AsyncSession, id: int):
-    result = await db.execute(select(User).where(User.id == id))
-    user = result.scalar_one_or_none()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
+async def delete_user_crud(db: AsyncSession, user: User):
     await db.delete(user)
     await db.commit()
     return {"message": "user deleted sucesfully"}

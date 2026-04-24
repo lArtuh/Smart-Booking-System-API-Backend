@@ -7,7 +7,7 @@ from app.models.nosql.booking_model import Booking
 # create payment
 
 
-async def create_payment(
+async def create_payment_crud(
     db: AsyncSession,
     booking: Booking,
     data: PaymentCreate,
@@ -16,7 +16,7 @@ async def create_payment(
     new_payment = Payment(
         user_id=user_id,
         booking_id=str(booking.id),
-        property_id=str(booking.property_id),
+        property_id=booking.property_id,
         amount=data.amount
 
     )
@@ -32,7 +32,7 @@ async def create_payment(
 # get payment
 
 
-async def get_payment(
+async def get_payment_crud(
     db: AsyncSession,
     payment_id: int,
     user_id: int
@@ -51,7 +51,7 @@ async def get_payment(
 # show all payments
 
 
-async def show_all_payments(db: AsyncSession, user_id: int):
+async def show_all_payments_crud(db: AsyncSession, user_id: int):
     payments = await db.execute(select(Payment).where(Payment.user_id == user_id))
     result = payments.scalars().all()
     return result

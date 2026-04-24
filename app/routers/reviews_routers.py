@@ -45,25 +45,15 @@ async def show_review_router(
 # show all reviews
 
 
-@review_router.get("/property/{property_id}", response_model=list[ReviewResponse])
+@review_router.get("/{property_id}", response_model=list[ReviewResponse])
 async def show_all_reviews_router(
     property_id: str
 ):
     reviews = await show_all_propertys_reviews_service(property_id)
     return reviews
 
-# # update review
-# @review_router.put("/{review_id}")
-# async def update_review_router(
-#     review_id: str,
-#     data: ReviewUpdate,
-#     property_id:  int = Depends(get_current_property),
-#     user_id: int = Depends(get_current_user),
-# ):
-#     return await update_review_service(user_id, review_id, property_id, data)
 
-# # delete review
-
+#  delete review
 
 @review_router.delete("/{review_id}")
 async def delete_review_router(

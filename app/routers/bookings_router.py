@@ -5,9 +5,9 @@ from app.auth.dependencies import get_current_user
 from app.services.booking_services import (
     create_booking_service,
     get_booking_service,
-    show_all_bookings_services,
+    show_all_user_bookings_services,
     update_booking_service,
-    cancel_booking
+    cancel_booking_service
 )
 
 booking_router = APIRouter(prefix="/bookings", tags=["bookings"])
@@ -35,14 +35,14 @@ async def show_booking_router(
     bookings = await get_booking_service(booking_id, current_user.id)
     return bookings
 
-# show all bookings
+# show all user bookings
 
 
 @booking_router.get("/", response_model=list[BookingResponse])
 async def show_all_bookings_router(
     current_user: User = Depends(get_current_user)
 ):
-    bookings = await show_all_bookings_services(current_user.id)
+    bookings = await show_all_user_bookings_services(current_user.id)
     return bookings
 
 # update booking
@@ -66,5 +66,5 @@ async def cancel_booking_router(
     booking_id: str,
     current_user: User = Depends(get_current_user)
 ):
-    canceled_booking = await cancel_booking(booking_id, current_user.id)
+    canceled_booking = await cancel_booking_service(booking_id, current_user.id)
     return canceled_booking

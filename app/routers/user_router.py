@@ -1,13 +1,15 @@
-from fastapi import Depends
+from app.auth.dependencies import get_current_user
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from app.models.sql.user_models import User
 from app.schemas.user_schemas import UserCreate, UserResponse, Token, UserLogin
 from app.core.database import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.user_services import (
     register,
     login,
-    get_all_user_service
+    get_all_user_service,
+    delete_user_service
 )
 
 
@@ -36,7 +38,7 @@ async def register_user(
 #    return new_user
 
 
-# loin
+# loginForm
 @user_router.post("/login", response_model=Token)
 async def login_user(
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -45,16 +47,6 @@ async def login_user(
     new_user = await login(db, form_data.username, form_data.password)
     return new_user
 
-
-# delogin
-
-
-@user_router.get("/all", response_model=list[UserResponse])
-async def delogin(
-    db: AsyncSession = Depends(get_db)
-):
-    users: list = await get_all_user_service(db)
-    return users
 
 # get users
 
@@ -65,3 +57,12 @@ async def get_users_router(
 ):
     users: list = await get_all_user_service(db)
     return users
+
+
+# delete User
+@user_router.delete("/delete")
+async def delete_user_router(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return await delete_user_service(db, current_user)
