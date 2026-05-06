@@ -4,29 +4,7 @@ from app.schemas.user_schemas import UserCreate, UserUpdate
 from app.auth.hashing import Hash
 from sqlalchemy import select
 from fastapi import HTTPException
-
-
-# async def create_user(db: AsyncSession, data: UserCreate):
-#     user_email = await db.execute(select(User).where(User.email == data.email))
-#     existing_user_email = user_email.scalar_one_or_none()
-#     if existing_user_email:
-#         raise HTTPException(
-#             status_code=409, detail="Email already in use")
-#     print("PASSWORD:", data.password)
-#     print("TYPE:", type(data.password))
-#     print("LEN:", len(data.password))
-#     hashed_pw = Hash.bcrypt(data.password)
-
-#     new_user = User(
-#         name=data.name,
-#         email=data.email,
-#         hashed_password=hashed_pw
-#     )
-
-#     db.add(new_user)
-#     await db.commit()
-#     await db.refresh(new_user)
-#     return new_user
+from sqlalchemy import delete
 
 
 async def create_user_crud(db: AsyncSession, data: UserCreate):
@@ -82,3 +60,9 @@ async def delete_user_crud(db: AsyncSession, user: User):
     await db.delete(user)
     await db.commit()
     return {"message": "user deleted sucesfully"}
+
+
+async def delete_all_user_crud(db: AsyncSession):
+    await db.execute(delete(User))
+    await db.commit()
+    return {"message": "All users deleted sucesfully"}

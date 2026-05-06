@@ -12,3 +12,4 @@ class Payment(Base):
     booking_id = Column(String, nullable=False)
     date = Column(DateTime, nullable=False, default=datetime.utcnow)
     amount = Column(Numeric(10, 2), nullable=False)
+    status = Column(String, nullable=False, default="pending")

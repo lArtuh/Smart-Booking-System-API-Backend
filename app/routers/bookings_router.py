@@ -61,7 +61,7 @@ async def update_booking_router(
 # cancel booking
 
 
-@booking_router.patch("/{booking_id}/cancel", response_model=BookingResponse)
+@booking_router.patch("/cancel/{booking_id}", response_model=BookingResponse)
 async def cancel_booking_router(
     booking_id: str,
     current_user: User = Depends(get_current_user)

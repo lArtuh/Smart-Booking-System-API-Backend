@@ -9,7 +9,8 @@ from app.services.user_services import (
     register,
     login,
     get_all_user_service,
-    delete_user_service
+    delete_user_service,
+    delete_all_users_service
 )
 
 
@@ -27,25 +28,26 @@ async def register_user(
     return new_user
 
 
-# login
-
-# @user_router.post("/login", response_model=Token)
-# async def login_user(
-#    data: UserLogin,
-#    db: AsyncSession = Depends(get_db)
-# ):
-#    new_user = await login(db, data.email, data.password)
-#    return new_user
+login
 
 
-# loginForm
 @user_router.post("/login", response_model=Token)
 async def login_user(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    data: UserLogin,
     db: AsyncSession = Depends(get_db)
 ):
-    new_user = await login(db, form_data.username, form_data.password)
+    new_user = await login(db, data.email, data.password)
     return new_user
+
+
+# # loginForm
+# @user_router.post("/login", response_model=Token)
+# async def login_user(
+#     form_data: OAuth2PasswordRequestForm = Depends(),
+#     db: AsyncSession = Depends(get_db)
+# ):
+#     new_user = await login(db, form_data.username, form_data.password)
+#     return new_user
 
 
 # get users
@@ -66,3 +68,11 @@ async def delete_user_router(
     current_user: User = Depends(get_current_user)
 ):
     return await delete_user_service(db, current_user)
+
+
+# delete all Users
+@user_router.delete("/deleteall")
+async def delete_all_user_router(
+    db: AsyncSession = Depends(get_db)
+):
+    return await delete_all_users_service(db)

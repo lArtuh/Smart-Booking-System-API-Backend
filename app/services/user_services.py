@@ -9,7 +9,8 @@ from app.crud.users_crud import (
     get_user_by_id_crud,
     get_user_by_email_crud,
     create_user_crud,
-    delete_user_crud
+    delete_user_crud,
+    delete_all_user_crud
 )
 
 # register/login user
@@ -31,7 +32,7 @@ async def register(db: AsyncSession, data: UserCreate):
 
 async def login(db: AsyncSession, email: str, password: str):
     user = await get_user_by_email_crud(db, email)
-    if not user or Hash.verify(user.hashed_password, password):
+    if not user or not Hash.verify(user.hashed_password, password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
      # GENERAR TOKEN
     access_token = create_access_token({"sub": str(user.id)})
@@ -44,7 +45,7 @@ async def login(db: AsyncSession, email: str, password: str):
 
 
 # get all users
-async def get_all_user_service_crud(db: AsyncSession):
+async def get_all_user_service(db: AsyncSession):
     user = await get_all_users_crud(db)
     return user
 
@@ -55,4 +56,9 @@ async def delete_user_service(db: AsyncSession, user: User):
     if not user:
         raise HTTPException(
             status_code=404, detail="User not found")
-    return await delete_user_crud(db, id)
+    return await delete_user_crud(db, user)
+
+
+# delete all users
+async def delete_all_users_service(db: AsyncSession):
+    return await delete_all_user_crud(db)

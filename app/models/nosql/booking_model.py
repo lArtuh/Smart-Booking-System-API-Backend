@@ -5,12 +5,14 @@ from datetime import datetime
 class Booking(Document):
 
     property_id: str
-    user_id: int
+    customer_id: int
     owner_id: int
     start_date: datetime
     end_date: datetime
-    status: str = "pending"
+    pay_status: str = "pending"
     pay_id: int | None = None
+    canceled: bool = False
+    paused: bool = False
 
     class Settings:
         name = "bookings"

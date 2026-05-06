@@ -45,7 +45,7 @@ async def show_review_router(
 # show all reviews
 
 
-@review_router.get("/{property_id}", response_model=list[ReviewResponse])
+@review_router.get("/property/{property_id}", response_model=list[ReviewResponse])
 async def show_all_reviews_router(
     property_id: str
 ):

@@ -1,7 +1,7 @@
 from app.models.nosql.booking_model import Booking
 from app.schemas.booking_schemas import BookingUpdate
 from app.services.properties_services import serialize
-from app.crud.properties_crud import get_property
+from app.crud.properties_crud import get_property_crud
 from fastapi import HTTPException
 from beanie import PydanticObjectId
 
@@ -27,7 +27,7 @@ async def get_booking_crud(
 
     booking = await Booking.find_one(
         Booking.id == booking_oid,
-        Booking.user_id == user_id
+        Booking.customer_id == user_id
     )
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
@@ -38,7 +38,7 @@ async def get_booking_crud(
 
 
 async def show_all_bookings_crud(user_id: int):
-    bookings = await Booking.find(Booking.user_id == user_id).sort("start_date").to_list()
+    bookings = await Booking.find(Booking.customer_id == user_id).sort("start_date").to_list()
     return bookings
 
 

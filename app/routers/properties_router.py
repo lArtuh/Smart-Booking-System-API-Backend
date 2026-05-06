@@ -8,6 +8,7 @@ from app.services.properties_services import (
     show_all_properties_services,
     update_property_service,
     delete_property_services,
+    delete_all_properties_services,
     pause_property,
 )
 
@@ -56,6 +57,13 @@ async def delete_property_router(
     current_user: User = Depends(get_current_user)
 ):
     return await delete_property_services(property_id, current_user.id)
+
+# delete all properties -------------------------------
+
+
+@property_router.delete("/")
+async def delete_all_properties_router():
+    return await delete_all_properties_services()
 
 
 # pause property

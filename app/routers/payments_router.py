@@ -8,6 +8,7 @@ from app.services.payment_services import (
     make_payment_service,
     get_payment_service,
     show_all_payments_service,
+    delete_all_payments_service
 )
 
 payment_router = APIRouter(prefix="/payments", tags=["payments"])
@@ -46,3 +47,11 @@ async def show_all_payments_router(
 ):
     payments = await show_all_payments_service(db, current_user.id)
     return payments
+
+
+# delete all payments
+@payment_router.delete("/deleteall")
+async def delete_all_payments_router(
+    db: AsyncSession = Depends(get_db)
+):
+    return await delete_all_payments_service(db)

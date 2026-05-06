@@ -9,6 +9,7 @@ from app.crud.payments_crud import (
     create_payment_crud,
     get_payment_crud,
     show_all_payments_crud,
+    delete_all_payments_crud
 )
 
 
@@ -22,7 +23,7 @@ async def make_payment_service(
 
     booking = await get_booking_crud(booking_id, user_id)
 
-    if booking.user_id != user_id:
+    if booking.customer_id != user_id:
         raise HTTPException(status_code=403, detail="Not authorized")
 
     result = await db.execute(
@@ -54,3 +55,8 @@ async def show_all_payments_service(
 ):
     payments = await show_all_payments_crud(db, user_id)
     return payments
+
+
+# delete all payments
+async def delete_all_payments_service(db: AsyncSession):
+    return await delete_all_payments_crud(db)

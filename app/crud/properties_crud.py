@@ -6,7 +6,7 @@ from beanie import PydanticObjectId
 # create property
 
 
-async def create_property_crud(user_id: str, data: PropertyCreate):
+async def create_property_crud(user_id: int, data: PropertyCreate):
     new_property = Property(
         **data.model_dump(),
         user_id=user_id
@@ -17,24 +17,23 @@ async def create_property_crud(user_id: str, data: PropertyCreate):
 
 # show property
 
-async def get_property_crud(property_id: str, user_id: str):
+async def get_property_crud(property_id: str):
     try:
         property_oid = PydanticObjectId(property_id)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid ID format")
 
-    property = await Property.find_one(
+    prop = await Property.find_one(
         Property.id == property_oid,
-        Property.user_id == user_id
     )
-    if not property:
+    if not prop:
         raise HTTPException(status_code=404, detail="Property not found")
-    return property
+    return prop
 
 
 # show all user properties
 
-async def show_all_user_properties_crud(user_id: str):
+async def show_all_user_properties_crud(user_id: int):
     properties = await Property.find(Property.user_id == user_id).to_list()
     return properties
 
@@ -61,4 +60,9 @@ async def update_property_crud(property: Property, data: PropertyUpdate):
 
 async def delete_property_crud(property: Property):
     await property.delete()
-    return {"mensage": "Property deleted successfully"}
+
+
+# delete all properties
+
+async def delete_all_properties_crud():
+    await Property.find_all().delete()

@@ -2,8 +2,7 @@ from app.schemas.booking_schemas import BookingCreate, BookingUpdate
 from app.models.nosql.booking_model import Booking
 from app.services.properties_services import serialize
 from fastapi import HTTPException
-from beanie import PydanticObjectId
-from app.crud.properties_crud import get_property
+from app.crud.properties_crud import get_property_crud
 from app.crud.booking_crud import (
     create_booking_crud,
     get_booking_crud,
@@ -19,7 +18,7 @@ async def create_booking_service(
     data: BookingCreate,
     user_id: int
 ):
-    prop = await get_property(property_id, str(user_id))
+    prop = await get_property_crud(property_id)
     if prop.user_id == user_id:
         raise HTTPException(
             status_code=400, detail="You can not book your own prop")
@@ -32,7 +31,7 @@ async def create_booking_service(
             detail="End date cannot be earlier than start date"
         )
     overlap = await Booking.find_one(
-        Booking.status != "paused",
+        Booking.paused == False,
         Booking.property_id == property_id,
         Booking.end_date >= data.start_date,
         Booking.start_date <= data.end_date
@@ -45,7 +44,7 @@ async def create_booking_service(
     new_booking = Booking(
         **data.model_dump(),
         property_id=property_id,
-        user_id=user_id,
+        customer_id=user_id,
         owner_id=prop.user_id
     )
 
@@ -54,9 +53,6 @@ async def create_booking_service(
     prop.status = "reserved"
     await prop.save()
 
-    # data = booking.model_dump()
-    # data["id"] = str(booking.id)
-    # return BookingResponse(**data)
     return await serialize(booking)
 
 # show booking
@@ -68,9 +64,6 @@ async def get_booking_service(
 ):
     booking = await get_booking_crud(booking_id, user_id)
 
-    # data = booking.model_dump()
-    # data["id"] = str(booking.id)
-    # return BookingResponse(**data)
     return await serialize(booking)
 
 # show all user bookings
@@ -78,16 +71,6 @@ async def get_booking_service(
 
 async def show_all_user_bookings_services(user_id: int):
     bookings = await show_all_bookings_crud(user_id)
-
-    # return [
-    #     BookingResponse(
-    #         **{
-    #             **b.model_dump(),
-    #             "id": str(b.id),
-    #         }
-    #     )
-    #     for b in bookings
-    # ]
 
     return [
         await serialize(b)
@@ -107,9 +90,6 @@ async def update_booking_service(
 
     booking = await update_booking_crud(booking, data)
 
-    # data = booking.model_dump()
-    # data["id"] = str(booking.id)
-    # return BookingResponse(**data)
     return await serialize(booking)
 
 # cancel booking
@@ -117,11 +97,8 @@ async def update_booking_service(
 
 async def cancel_booking_service(booking_id: str, user_id: int):
     booking: Booking = await get_booking_crud(booking_id, user_id)
-    if booking.status == "canceled":
+    if booking.canceled:
         raise HTTPException(400, "Booking already canceled")
-    await booking.set({"status": "canceled"})
+    await booking.set({"canceled": True})
 
-    # data = booking.model_dump()
-    # data["id"] = str(booking.id)
-    # return BookingResponse(**data)
     return await serialize(booking)

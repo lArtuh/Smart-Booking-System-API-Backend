@@ -2,13 +2,13 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
 from app.models.nosql.booking_model import Booking
-from app.crud.payments_crud import get_payment
+from app.crud.payments_crud import get_payment_crud
 
 # validate booking
 
 
 def validate_booking_for_review(booking: Booking):
-    if booking.status == "canceled":
+    if booking.canceled:
         raise HTTPException(status_code=400, detail="Booking was canceled")
 
     if datetime.utcnow() < booking.end_date:
@@ -28,10 +28,10 @@ async def validate_payment(
     property_id: str
 ):
 
-    if not booking.pay_id or booking.status != "paid":
+    if not booking.pay_id or booking.pay_status != "paid":
         raise HTTPException(status_code=403, detail="Payment not complete")
 
-    payment = await get_payment(
+    payment = await get_payment_crud(
         db,
         booking.pay_id,
         user_id,

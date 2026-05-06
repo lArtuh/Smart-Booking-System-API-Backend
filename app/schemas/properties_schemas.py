@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from beanie import PydanticObjectId
 
 
 class PropertyBase(BaseModel):
@@ -28,3 +27,4 @@ class PropertyResponse(PropertyBase):
     user_id: int
     status: str
     price_per_night: float
+    favorites_count: int

@@ -1,11 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.nosql.booking_model import Booking
-from app.schemas.reviews_schemas import ReviewCreate, ReviewResponse
+from app.schemas.reviews_schemas import ReviewCreate
 from app.services.validators import validate_booking_for_review, validate_payment
 from app.services.properties_services import serialize
 from app.models.nosql.review_model import Review
 from fastapi import HTTPException
-from app.crud.booking_crud import get_booking
+from app.crud.booking_crud import get_booking_crud
 from app.crud.reviews_crud import (
     create_review_crud,
     get_review_crud,
@@ -23,18 +22,18 @@ async def create_review_service(
     db: AsyncSession,
 ):
 
-    booking = await get_booking(booking_id, user_id)
+    booking = await get_booking_crud(booking_id, user_id)
 
     #  validar si la reserva no fue cancelada (esto estaba generando problemas por eso lo desactivé)
     #  await validate_booking_for_review(booking)
 
     #  validar pago
-    await validate_payment(
-        booking,
-        db,
-        user_id,
-        property_id=booking.property_id,
-    )
+    # await validate_payment(
+    #     booking,
+    #     db,
+    #     user_id,
+    #     property_id=booking.property_id,
+    # )
 
     # validar si no hay reservas aún
     review = await Review.find_one(

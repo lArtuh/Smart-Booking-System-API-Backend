@@ -21,5 +21,7 @@ class BookingResponse(BookingBase):
     customer_id: int
     owner_id: int
     property_id: str
-    status: str | None = "pending"
-    pay_id: int | None = None
+    pay_status: str
+    pay_id: int | None
+    canceled: bool
+    paused: bool

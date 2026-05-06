@@ -4,8 +4,10 @@ from app.models.sql.payment_models import Payment
 from app.schemas.payments_schemas import PaymentCreate
 from fastapi import HTTPException
 from app.models.nosql.booking_model import Booking
-# create payment
+from sqlalchemy import delete
 
+
+# create payment
 
 async def create_payment_crud(
     db: AsyncSession,
@@ -55,3 +57,11 @@ async def show_all_payments_crud(db: AsyncSession, user_id: int):
     payments = await db.execute(select(Payment).where(Payment.user_id == user_id))
     result = payments.scalars().all()
     return result
+
+# delete all payments
+
+
+async def delete_all_payments_crud(db: AsyncSession):
+    await db.execute(delete(Payment))
+    await db.commit()
+    return {"message": "All payments deleted sucesfully"}
