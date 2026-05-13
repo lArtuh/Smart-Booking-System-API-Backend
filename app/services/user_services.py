@@ -1,9 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.sql.user_models import User
+from app.models.nosql.property_model import Property
 from app.auth.hashing import Hash
 from fastapi import HTTPException
 from app.auth.jwt_handler import create_access_token
 from app.schemas.user_schemas import UserCreate
+from app.services.properties_services import show_all_user_properties_services
+from app.services.booking_services import show_all_property_bookings_services
 from app.crud.users_crud import (
     get_all_users_crud,
     get_user_by_id_crud,
@@ -56,7 +59,18 @@ async def delete_user_service(db: AsyncSession, user: User):
     if not user:
         raise HTTPException(
             status_code=404, detail="User not found")
-    return await delete_user_crud(db, user)
+
+    # buscar todas las propiedades de ese usuario, si no hay devuelve lista vacía
+    properties: Property = await show_all_user_properties_services(user.id)
+    # verificar que ninguna tenga bookings pendientes(eso se hace buscando los bookings por propiedad en un bucle)
+    for prop in properties:
+        bookings = await show_all_property_bookings_services(prop.id)
+        if not bookings:
+            # borrar sus respectivas propiedades
+            await
+            return await delete_user_crud(db, user)
+
+    # borrar las propiedades
 
 
 # delete all users

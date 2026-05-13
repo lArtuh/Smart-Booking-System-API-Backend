@@ -6,6 +6,7 @@ from app.services.favorites_services import (
     create_favorite_services,
     show_all_favorites_services,
     delete_favorite_services,
+    delete_all_favorites_services
 )
 
 favorite_router = APIRouter(prefix="/favorites", tags=["favorites"])
@@ -37,3 +38,11 @@ async def delete_favorite_router(
     current_user: User = Depends(get_current_user)
 ):
     return await delete_favorite_services(current_user.id, property_id)
+
+
+# delete all favorites
+
+
+@favorite_router.delete("/")
+async def delete_all_favorites_router():
+    return await delete_all_favorites_services()

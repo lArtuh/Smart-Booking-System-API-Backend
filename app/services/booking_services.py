@@ -6,8 +6,10 @@ from app.crud.properties_crud import get_property_crud
 from app.crud.booking_crud import (
     create_booking_crud,
     get_booking_crud,
-    show_all_bookings_crud,
-    update_booking_crud
+    show_all_user_bookings_crud,
+    show_all_property_bookings_crud,
+    update_booking_crud,
+    delete_all_bookings_crud
 )
 
 # create booking
@@ -70,7 +72,19 @@ async def get_booking_service(
 
 
 async def show_all_user_bookings_services(user_id: int):
-    bookings = await show_all_bookings_crud(user_id)
+    bookings = await show_all_user_bookings_crud(user_id)
+
+    return [
+        await serialize(b)
+        for b in bookings
+    ]
+
+
+# show all properties bookings
+
+
+async def show_all_property_bookings_services(property_id: str):
+    bookings = await show_all_properties_bookings_crud(property_id)
 
     return [
         await serialize(b)
@@ -102,3 +116,10 @@ async def cancel_booking_service(booking_id: str, user_id: int):
     await booking.set({"canceled": True})
 
     return await serialize(booking)
+
+# delete all bookings
+
+
+async def delete_all_bookings_services():
+    await delete_all_bookings_crud()
+    return {"menssage": "All bookings deleted successfully"}

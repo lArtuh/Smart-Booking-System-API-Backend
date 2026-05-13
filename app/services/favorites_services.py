@@ -6,7 +6,8 @@ from app.crud.favorites_crud import (
     update_favorites_crud,
     get_all_favorites_crud,
     get_one_favorite_crud,
-    delete_favorite_crud
+    delete_favorite_crud,
+    delete_all_favorites_crud
 )
 
 # create favorite
@@ -39,3 +40,10 @@ async def delete_favorite_services(user_id: int, property_id: str):
     await delete_favorite_crud(favorite, property_id)
     favorites = await get_all_favorites_crud(user_id)
     return await serialize(favorites)
+
+# delete all favorites
+
+
+async def delete_all_favorites_services():
+    await delete_all_favorites_crud()
+    return {"menssage": "All favorites deleted successfully"}

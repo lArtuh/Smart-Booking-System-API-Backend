@@ -7,7 +7,8 @@ from app.services.booking_services import (
     get_booking_service,
     show_all_user_bookings_services,
     update_booking_service,
-    cancel_booking_service
+    cancel_booking_service,
+    delete_all_bookings_service
 )
 
 booking_router = APIRouter(prefix="/bookings", tags=["bookings"])
@@ -68,3 +69,9 @@ async def cancel_booking_router(
 ):
     canceled_booking = await cancel_booking_service(booking_id, current_user.id)
     return canceled_booking
+
+
+# delete all bookings
+@booking_router.delete("/")
+async def delete_all_properties_router():
+    return await delete_all_bookings_services()

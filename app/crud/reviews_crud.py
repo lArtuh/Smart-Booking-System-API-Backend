@@ -59,3 +59,9 @@ async def show_all_reviews_crud(property_id: str):
 
 async def delete_review_crud(review: Review):
     await review.delete()
+
+
+# delete all reviews
+
+async def delete_all_reviews_crud():
+    await Review.find_all().delete()

@@ -37,12 +37,21 @@ async def get_booking_crud(
 # show all user bookings
 
 
-async def show_all_bookings_crud(user_id: int):
+async def show_all_user_bookings_crud(user_id: int):
     bookings = await Booking.find(Booking.customer_id == user_id).sort("start_date").to_list()
     return bookings
 
 
+# show all properties bookings
+
+
+async def show_all_property_bookings_crud(property_id: str):
+    bookings = await Booking.find(Booking.property_id == int(property_id)).to_list()
+    return bookings
+
 # update booking
+
+
 async def update_booking_crud(booking: Booking, data: BookingUpdate):
     await booking.set(data.model_dump(exclude_unset=True))
     return booking
@@ -55,3 +64,9 @@ async def update_booking_crud(booking: Booking, data: BookingUpdate):
 #     await booking.delete()
 #     prop.status = "available"
 #     return {"message": "Booking deleted successfully"}
+
+
+# delete all bookings
+
+async def delete_all_bookings_crud():
+    await Booking.find_all().delete()

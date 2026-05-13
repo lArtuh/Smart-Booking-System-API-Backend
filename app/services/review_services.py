@@ -9,7 +9,8 @@ from app.crud.reviews_crud import (
     create_review_crud,
     get_review_crud,
     show_all_reviews_crud,
-    delete_review_crud
+    delete_review_crud,
+    delete_all_reviews_crud
 )
 
 # make review
@@ -35,7 +36,7 @@ async def create_review_service(
     #     property_id=booking.property_id,
     # )
 
-    # validar si no hay reservas aún
+    # validar si no hay reseñas aún
     review = await Review.find_one(
         Review.user_id == user_id,
         Review.property_id == booking.property_id
@@ -53,10 +54,10 @@ async def create_review_service(
 
     )
 
-    return await serialize(review)
+    return review
 
 
-# show review
+# show review serializer
 
 
 async def show_review_service(review_id: str, user_id: int):
@@ -64,7 +65,8 @@ async def show_review_service(review_id: str, user_id: int):
 
     return await serialize(review)
 
-# show all propery review
+
+# show all property review serializer
 
 
 async def show_all_propertys_reviews_service(
@@ -78,6 +80,8 @@ async def show_all_propertys_reviews_service(
 
 
 # delete review
+
+
 async def delete_review_service(
     review_id: str,
     user_id: int
@@ -86,3 +90,10 @@ async def delete_review_service(
     review = await get_review_crud(review_id, user_id)
     await delete_review_crud(review)
     return {"mensage": "Review deleted successfully"}
+
+# delete all reviews
+
+
+async def delete_all_reviews_services():
+    await delete_all_reviews_crud()
+    return {"menssage": "All reviews deleted successfully"}

@@ -66,3 +66,9 @@ async def delete_property_crud(property: Property):
 
 async def delete_all_properties_crud():
     await Property.find_all().delete()
+
+
+# delete all user properties
+
+async def delete_all_properties_crud(user_id: int):
+    await Property.find_all().delete()

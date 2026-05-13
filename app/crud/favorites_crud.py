@@ -48,3 +48,9 @@ async def delete_favorite_crud(favorite: Favorites, property_id: str):
     await favorite.update({"$pull": {"property_ids": property_id}})
     prop = await get_property_crud(property_id)
     await prop.update({"$inc": {"favorites_count": -1}})
+
+
+# delete all favorites
+
+async def delete_all_favorites_crud():
+    await Favorites.find_all().delete()

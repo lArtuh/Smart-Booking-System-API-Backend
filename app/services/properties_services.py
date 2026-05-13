@@ -83,7 +83,15 @@ async def delete_property_services(property_id: str, user_id: int):
 
 async def delete_all_properties_services():
     await delete_all_properties_crud()
-    return {"menssage": "All deleted successfully"}
+    return {"menssage": "All properties deleted successfully"}
+
+# delete all user properties
+
+
+async def delete_all_user_properties_services(user_id: int):
+    prop = await properties = await show_all_user_properties_crud(user_id)
+    await delete_all_properties_crud()
+    return {"menssage": "All properties deleted successfully"}
 
 
 # pause property

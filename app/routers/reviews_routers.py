@@ -8,7 +8,8 @@ from app.services.review_services import (
     create_review_service,
     show_review_service,
     show_all_propertys_reviews_service,
-    delete_review_service
+    delete_review_service,
+    delete_all_reviews_services
 )
 
 review_router = APIRouter(prefix="/reviews", tags=["reviews"])
@@ -45,7 +46,7 @@ async def show_review_router(
 # show all reviews
 
 
-@review_router.get("/property/{property_id}", response_model=list[ReviewResponse])
+@review_router.get("/all/{property_id}", response_model=list[ReviewResponse])
 async def show_all_reviews_router(
     property_id: str
 ):
@@ -61,3 +62,10 @@ async def delete_review_router(
     current_user: User = Depends(get_current_user)
 ):
     return await delete_review_service(review_id, current_user.id)
+
+
+# delete all reviews
+
+@review_router.delete("/")
+async def delete_all_reviews_router():
+    return await delete_all_reviews_services()

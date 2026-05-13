@@ -58,7 +58,7 @@ async def delete_property_router(
 ):
     return await delete_property_services(property_id, current_user.id)
 
-# delete all properties -------------------------------
+# delete all properties
 
 
 @property_router.delete("/")
