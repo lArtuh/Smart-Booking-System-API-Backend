@@ -1,7 +1,8 @@
 from beanie import Document
 from datetime import datetime
 from typing import List
-from pydantic import Field
+from pydantic import Field, ConfigDict
+from bson import ObjectId
 
 
 class Property(Document):

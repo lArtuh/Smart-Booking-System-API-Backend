@@ -1,7 +1,6 @@
 from beanie import Document
 from datetime import datetime
-from pydantic import Field
-from pydantic import ConfigDict
+from pydantic import Field, ConfigDict
 from bson import ObjectId
 
 
@@ -13,11 +12,11 @@ class Review(Document):
     description: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-    model_config = ConfigDict(
-        json_encoders={
-            ObjectId: str
-        }
-    )
+    # model_config = ConfigDict(
+    #     json_encoders={
+    #         ObjectId: str
+    #     }
+    # )
 
     class Settings:
         name = "reviews"

@@ -45,7 +45,7 @@ async def show_all_user_bookings_crud(user_id: int):
 # show all properties bookings
 
 
-async def show_all_property_bookings_crud(property_id: str):
+async def show_all_properties_bookings_crud(property_id: str):
     bookings = await Booking.find(Booking.property_id == int(property_id)).to_list()
     return bookings
 

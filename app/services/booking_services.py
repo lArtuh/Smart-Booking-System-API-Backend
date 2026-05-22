@@ -7,7 +7,7 @@ from app.crud.booking_crud import (
     create_booking_crud,
     get_booking_crud,
     show_all_user_bookings_crud,
-    show_all_property_bookings_crud,
+    show_all_properties_bookings_crud,
     update_booking_crud,
     delete_all_bookings_crud
 )
@@ -83,7 +83,7 @@ async def show_all_user_bookings_services(user_id: int):
 # show all properties bookings
 
 
-async def show_all_property_bookings_services(property_id: str):
+async def show_all_property_bookings_service(property_id: str):
     bookings = await show_all_properties_bookings_crud(property_id)
 
     return [
@@ -120,6 +120,6 @@ async def cancel_booking_service(booking_id: str, user_id: int):
 # delete all bookings
 
 
-async def delete_all_bookings_services():
+async def delete_all_bookings_service():
     await delete_all_bookings_crud()
     return {"menssage": "All bookings deleted successfully"}

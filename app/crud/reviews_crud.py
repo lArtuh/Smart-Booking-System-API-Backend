@@ -49,11 +49,6 @@ async def show_all_reviews_crud(property_id: str):
     return reviews
 
 
-# # update review
-# async def update_review(review: Review, data: ReviewUpdate):
-#     await review.set(data.model_dump(exclude_unset=True))
-#     return {"message": "Review updated successfully"}
-
 # delete review
 
 

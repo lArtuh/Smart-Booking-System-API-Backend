@@ -43,3 +43,13 @@ async def validate_payment(
         )
 
     return payment
+
+
+# validate pending bookings
+async def validate_pending_bookings(
+    bookings: list[Booking]
+):
+    for booking in bookings:
+        if booking.pay_status == "pending" and booking.end_date < datetime.now():
+            raise HTTPException(
+                status_code=401, detail="pending bookins")

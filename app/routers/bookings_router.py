@@ -74,4 +74,4 @@ async def cancel_booking_router(
 # delete all bookings
 @booking_router.delete("/")
 async def delete_all_properties_router():
-    return await delete_all_bookings_services()
+    return await delete_all_bookings_service()

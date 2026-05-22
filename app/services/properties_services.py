@@ -1,5 +1,6 @@
 from beanie import Document
 from app.schemas.properties_schemas import PropertyCreate, PropertyUpdate, PropertyResponse
+from app.models.nosql.property_model import Property
 from fastapi import HTTPException
 from app.crud.properties_crud import (
     create_property_crud,
@@ -75,7 +76,7 @@ async def delete_property_services(property_id: str, user_id: int):
     if not is_available:
         raise HTTPException(
             status_code=403, detail="property has active bookings")
-    await delete_property_crud(property)
+    await delete_property_crud(prop)
     return {"menssage": "Property deleted successfully"}
 
 # delete all properties
@@ -89,8 +90,9 @@ async def delete_all_properties_services():
 
 
 async def delete_all_user_properties_services(user_id: int):
-    prop = await properties = await show_all_user_properties_crud(user_id)
-    await delete_all_properties_crud()
+    prop: list[Property] = await show_all_user_properties_crud(user_id)
+    for p in prop:
+        await delete_property_crud(p)
     return {"menssage": "All properties deleted successfully"}
 
 
